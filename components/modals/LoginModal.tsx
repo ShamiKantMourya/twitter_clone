@@ -2,13 +2,24 @@ import useLoginModal from "@/hooks/useLoginModal";
 import { useCallback, useState } from "react";
 import Input from "../Input";
 import Modal from "../Modal";
+import useRegisterModal from "@/hooks/useRegisterModal";
 
 const LoginModal = () => {
     const loginmodal = useLoginModal();
+    const registerModal = useRegisterModal();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const onToggle = useCallback(() => {
+        if (isLoading) {
+            return;
+        }
+
+        loginmodal.onClose();
+        registerModal.onOpen();
+    }, [isLoading, loginmodal, registerModal]);
 
     const onSubmit = useCallback(async () => {
         try {
@@ -40,6 +51,15 @@ const LoginModal = () => {
             />
         </div>
     );
+
+    const footerContent = (
+        <div className="text-neutral-400 text-center mt-4">
+            <p>
+                First time using X? 
+                <span onClick={onToggle} className="text-white cursor-pointer hover:underline">Sign up</span>
+            </p>
+        </div>
+    )
     return (
         <Modal
             disabled={isLoading}
@@ -49,6 +69,7 @@ const LoginModal = () => {
             onClose={loginmodal.onClose}
             onSubmit={onSubmit}
             body={bodyContent}
+            footer={footerContent}
         />
     )
 };
